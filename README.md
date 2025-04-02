@@ -72,7 +72,7 @@ streamlit run app.py
 
 ## Estructura del Proyecto
 
-
+"""
 sentiment-analysis-app/
 │
 ├── app.py                     # Punto de entrada principal
@@ -94,7 +94,7 @@ sentiment-analysis-app/
 ├── components.py          # Componentes reutilizables
 ├── pages.py               # Páginas principales
 └── sidebar.py             # Componentes de la barra lateral
-
+"""
 
 
 ## Opciones de Configuración
