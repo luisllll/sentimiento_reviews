@@ -1,5 +1,5 @@
 """
-Componentes de la barra lateral para la interfaz de usuario.
+Sidebar components for the user interface.
 """
 import os
 import streamlit as st
@@ -10,79 +10,79 @@ from config.settings import (
     DEFAULT_SYSTEM_PROMPT, DEFAULT_MODEL, DEFAULT_REASONING_EFFORT
 )
 
-# Configurar logger
+# Configure logger
 logger = logging.getLogger(__name__)
 
 def render_sidebar() -> Dict[str, Any]:
     """
-    Renderiza la barra lateral con opciones de configuración.
+    Renders the sidebar with configuration options.
     
     Returns:
-        Diccionario con la configuración seleccionada
+        Dictionary with the selected configuration
     """
-    st.sidebar.header("⚙️ Configuración")
+    st.sidebar.header("⚙️ Configuration")
     
     # API Key status
     api_key = os.getenv("OPENAI_API_KEY")
     if api_key:
-        st.sidebar.success("✅ API Key cargada desde archivo .env")
+        st.sidebar.success("✅ API Key loaded from .env file")
     else:
-        st.sidebar.warning("⚠️ API Key no encontrada en archivo .env")
-        api_key = st.sidebar.text_input("API Key de OpenAI (alternativa)", type="password")
+        st.sidebar.warning("⚠️ API Key not found in .env file")
+        api_key = st.sidebar.text_input("OpenAI API Key (alternative)", type="password")
         if api_key:
             os.environ["OPENAI_API_KEY"] = api_key
-            logger.info("API Key configurada manualmente")
+            logger.info("API Key configured manually")
     
-    # Parámetros de procesamiento
+    # Processing parameters
     chunk_size = st.sidebar.slider(
-        "Tamaño de cada chunk de comentarios", 
+        "Size of each comment chunk", 
         min_value=MIN_CHUNK_SIZE, 
         max_value=MAX_CHUNK_SIZE, 
         value=DEFAULT_CHUNK_SIZE,
-        help="Número de comentarios a procesar en cada grupo"
+        help="Number of comments to process in each group"
     )
     
     max_comments = st.sidebar.number_input(
-        "Máximo de comentarios a analizar (0 = todos)", 
+        "Maximum comments to analyze (0 = all)", 
         min_value=0, 
         value=0,
-        help="Limita el número total de comentarios a analizar (0 para analizar todos)"
+        help="Limits the total number of comments to analyze (0 to analyze all)"
     )
     
-    # Sistema de instrucciones personalizado
+    # Custom instruction system
     st.sidebar.markdown("---")
-    st.sidebar.markdown("### 📝 Personalizar instrucciones")
+    st.sidebar.markdown("### 📝 Customize Instructions")
     
     system_prompt = st.sidebar.text_area(
-        "Instrucciones para el modelo",
+        "Instructions for the model",
         value=DEFAULT_SYSTEM_PROMPT,
         height=300
     )
     
-    # Información de la aplicación
+    # Application information
     st.sidebar.markdown("---")
-    expander = st.sidebar.expander("ℹ️ Acerca de", expanded=False)
+    expander = st.sidebar.expander("ℹ️ About", expanded=False)
     with expander:
-        st.markdown("""
-        **Análisis de Sentimiento de Comentarios**
+        st.markdown(""" 
+        **Comment Sentiment Analysis**
         
-        Versión: 1.0.0
+        Version: 1.0.0
         
-        Esta aplicación utiliza modelos de razonamiento avanzado para analizar comentarios 
-        de clientes y extraer insights accionables.
+        This application uses advanced reasoning models to analyze customer comments 
+        and extract actionable insights.
         """)
     
-    # Recopilar todas las opciones en un diccionario usando valores por defecto para opciones avanzadas
+    # Gather all options in a dictionary using default values for advanced options
     config = {
         "api_key_status": bool(api_key),
         "chunk_size": chunk_size,
         "max_comments": max_comments,
         "model": DEFAULT_MODEL,
         "reasoning_effort": DEFAULT_REASONING_EFFORT,
-        "column_name": "Cuerpo",  # Valor fijo
+        "column_name": "Cuerpo",  # Fixed value
         "system_prompt": system_prompt,
-        "output_format": "TXT"  # Valor fijo
+        "output_format": "TXT"  # Fixed value
     }
     
-    logger.info(f"Configuración cargada: {', '.join(f'{k}={v}' for k, v in config.items() if k != 'system_prompt' and k != 'api_key_status')}")
+    logger.info(f"Configuration loaded: {', '.join(f'{k}={v}' for k, v in config.items() if k != 'system_prompt' and k != 'api_key_status')}")
     return config

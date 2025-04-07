@@ -1,5 +1,5 @@
 """
-Componentes reutilizables para la interfaz de usuario.
+Reusable components for the user interface.
 """
 import streamlit as st
 import pandas as pd
@@ -7,79 +7,79 @@ import logging
 from typing import Dict, List, Any, Optional, Callable
 import time
 
-from utils.visualization import create_sentiment_pie_chart, create_themes_bar_chart,format_full_report
+from utils.visualization import create_sentiment_pie_chart, create_themes_bar_chart, format_full_report
 from utils.metrics_extraction import format_key_points
 
-# Configurar logger
+# Configure logger
 logger = logging.getLogger(__name__)
 
-def upload_area(help_text: str = "El archivo debe contener una columna 'Cuerpo' con los comentarios") -> None:
+def upload_area(help_text: str = "The file must contain a 'Body' column with the comments") -> None:
     """
-    Muestra el área de arrastrar y soltar para subir archivos.
+    Displays the drag-and-drop area for file uploads.
     
     Args:
-        help_text: Texto de ayuda para mostrar
+        help_text: Help text to display
     """
     st.markdown("""
     <div class="upload-area">
-        <h3>📁 Arrastra y suelta tu archivo CSV aquí</h3>
+        <h3>📁 Drag and drop your CSV file here</h3>
         <p>{}</p>
     </div>
     """.format(help_text), unsafe_allow_html=True)
 
 def display_example_dataframe() -> None:
-    """Muestra un DataFrame de ejemplo para ilustrar el formato esperado."""
-    st.markdown("### 🔍 Ejemplo de formato esperado del CSV:")
+    """Displays an example DataFrame to illustrate the expected format."""
+    st.markdown("### 🔍 Example of the expected CSV format:")
     
     example_df = pd.DataFrame({
         'ID': [1, 2, 3],
-        'Cuerpo': [
-            "Me encanta este producto, funciona perfectamente y la calidad es excelente.",
-            "El envío fue rápido pero el producto no cumplió mis expectativas de calidad.",
-            "Precio elevado para la calidad que ofrece, pero cumple con lo básico."
+        'Body': [
+            "I love this product, it works perfectly and the quality is excellent.",
+            "The shipping was fast, but the product didn't meet my quality expectations.",
+            "Price is high for the quality it offers, but it meets the basics."
         ],
-        'Fecha': ['2023-01-15', '2023-01-20', '2023-01-25']
+        'Date': ['2023-01-15', '2023-01-20', '2023-01-25']
     })
     
     st.dataframe(example_df, hide_index=True)
 
 def display_instructions() -> None:
-    """Muestra instrucciones sobre cómo usar la aplicación."""
+    """Displays instructions on how to use the application."""
     st.markdown("""
-    ### 🚀 Cómo funciona:
-    1. Sube tu archivo CSV con comentarios
-    2. Configura los parámetros de análisis en el panel lateral
-    3. Haz clic en "Analizar comentarios"
-    4. Recibe un análisis detallado y accionable
+    ### 🚀 How it works:
+    1. Upload your CSV file with comments
+    2. Set the analysis parameters in the sidebar
+    3. Click on "Analyze Comments"
+    4. Receive a detailed and actionable analysis
     
-    ### 🧠 Tecnología:
-    Esta herramienta utiliza modelos de razonamiento avanzado para:
-    - Analizar grandes volúmenes de comentarios
-    - Detectar patrones y tendencias
-    - Extraer insights accionables
-    - Generar recomendaciones estratégicas
+    ### 🧠 Technology:
+    This tool uses advanced reasoning models to:
+    - Analyze large volumes of comments
+    - Detect patterns and trends
+    - Extract actionable insights
+    - Generate strategic recommendations
     """)
 
 def progress_tracker(total_steps: int) -> tuple:
     """
-    Crea un sistema de seguimiento de progreso con barra y texto.
+    Creates a progress tracking system with a progress bar and text.
     
     Args:
-        total_steps: Número total de pasos
+        total_steps: Total number of steps
         
     Returns:
-        Tupla con (barra_progreso, texto_progreso, función_actualizar)
+        Tuple with (progress_bar, progress_text, update_function)
     """
-    st.markdown("### ⏳ Progreso del análisis")
+    st.markdown("### ⏳ Analysis Progress")
     progress_bar = st.progress(0)
     progress_text = st.empty()
     
     def update_progress(step: int, message: str) -> None:
-        """Actualiza la barra de progreso y el mensaje."""
+        """Updates the progress bar and message."""
         progress = min(step / total_steps, 1.0)
         progress_bar.progress(progress)
         progress_text.text(message)
-        # Pequeña pausa para visualizar mejor la actualización
+        # Small pause to visualize the update better
         time.sleep(0.1)
     
     return progress_bar, progress_text, update_progress
@@ -90,123 +90,123 @@ def metrics_display(
     total_tokens: int
 ) -> None:
     """
-    Muestra métricas generales en tres columnas.
+    Displays general metrics in three columns.
     
     Args:
-        total_comments: Número total de comentarios analizados
-        tokens_reasoning: Número de tokens de razonamiento utilizados
-        total_tokens: Número total de tokens utilizados
+        total_comments: Total number of comments analyzed
+        tokens_reasoning: Number of reasoning tokens used
+        total_tokens: Total number of tokens used
     """
     col1, col2, col3 = st.columns(3)
     
     with col1:
-        st.metric("Total de comentarios", f"{total_comments:,}")
+        st.metric("Total Comments", f"{total_comments:,}")
     
     with col2:
-        st.metric("Tokens de razonamiento", f"{tokens_reasoning:,}")
+        st.metric("Reasoning Tokens", f"{tokens_reasoning:,}")
     
     with col3:
-        st.metric("Total de tokens", f"{total_tokens:,}")
+        st.metric("Total Tokens", f"{total_tokens:,}")
 
 def results_tabs(analysis_text: str, metrics: Dict[str, Any], formatted_sections: Dict[str, str], filepath: str) -> None:
     """
-    Muestra los resultados en pestañas organizadas (versión mejorada).
+    Displays results in organized tabs (improved version).
     
     Args:
-        analysis_text: Texto completo del análisis
-        metrics: Métricas extraídas para visualización
-        formatted_sections: Secciones del análisis formateadas
-        filepath: Ruta al archivo guardado para descarga
+        analysis_text: Full analysis text
+        metrics: Extracted metrics for visualization
+        formatted_sections: Formatted sections of the analysis
+        filepath: Path to the saved file for download
     """
-    # Crear pestañas simplificadas
-    tab1, tab2 = st.tabs(["📊 Resumen Visual", "📄 Informe Completo"])
+    # Create simplified tabs
+    tab1, tab2 = st.tabs(["📊 Visual Summary", "📄 Full Report"])
     
     with tab1:
-        # Gráfico de sentimiento
+        # Sentiment chart
         st.plotly_chart(
             create_sentiment_pie_chart(metrics["sentiment_distribution"]), 
             use_container_width=True
         )
         
-        # Mostrar solo las secciones más importantes
-        st.markdown("### 🔍 Principales Hallazgos")
+        # Display only the most important sections
+        st.markdown("### 🔍 Key Findings")
         
-        # Mostrar fortalezas y áreas de mejora en columnas
+        # Show strengths and areas for improvement in columns
         col1, col2 = st.columns(2)
         
         with col1:
-            if "fortalezas" in formatted_sections:
-                st.markdown("#### ✅ Fortalezas")
-                fortalezas_text = formatted_sections.get("fortalezas", "").replace("### ✅ FORTALEZAS DEL PRODUCTO\n\n", "")
+            if "strengths" in formatted_sections:
+                st.markdown("#### ✅ Strengths")
+                strengths_text = formatted_sections.get("strengths", "").replace("### ✅ PRODUCT STRENGTHS\n\n", "")
                 
-                # Formatear puntos como viñetas más legibles
-                points = format_key_points(fortalezas_text, max_points=3)
+                # Format points as more readable bullet points
+                points = format_key_points(strengths_text, max_points=3)
                 if points:
                     for point in points.split("• "):
                         if point.strip():
                             st.markdown(f"• {point.strip()}")
         
         with col2:
-            # Asegurar que siempre se muestre la sección de áreas de mejora
-            st.markdown("#### ⚠️ Áreas de Mejora")
+            # Ensure the areas for improvement section is always shown
+            st.markdown("#### ⚠️ Areas for Improvement")
             
-            # Obtener texto de áreas de mejora o proporcionar un mensaje predeterminado
-            mejoras_text = formatted_sections.get("mejoras", "").replace("### ⚠️ ÁREAS DE MEJORA\n\n", "")
-            if not mejoras_text.strip():
-                mejoras_text = "No se identificaron áreas específicas de mejora en los comentarios analizados."
+            # Get text for areas for improvement or provide a default message
+            improvements_text = formatted_sections.get("improvements", "").replace("### ⚠️ AREAS FOR IMPROVEMENT\n\n", "")
+            if not improvements_text.strip():
+                improvements_text = "No specific areas for improvement identified in the analyzed comments."
             
-            # Formatear puntos como viñetas más legibles
-            points = format_key_points(mejoras_text, max_points=3)
+            # Format points as more readable bullet points
+            points = format_key_points(improvements_text, max_points=3)
             if points:
                 for point in points.split("• "):
                     if point.strip():
                         st.markdown(f"• {point.strip()}")
             else:
-                st.markdown("No se identificaron áreas específicas de mejora.")
+                st.markdown("No specific areas for improvement identified.")
         
-        # Añadir recomendaciones en una sección aparte
-        st.markdown("### 🚀 Recomendaciones Clave")
+        # Add recommendations in a separate section
+        st.markdown("### 🚀 Key Recommendations")
         
-        # Obtener texto de recomendaciones o proporcionar un mensaje predeterminado
-        recom_text = formatted_sections.get("recomendaciones", "").replace("### 🚀 RECOMENDACIONES ACCIONABLES\n\n", "")
-        if not recom_text.strip():
-            recom_text = "No hay suficientes datos para generar recomendaciones específicas."
+        # Get text for recommendations or provide a default message
+        recommendations_text = formatted_sections.get("recommendations", "").replace("### 🚀 ACTIONABLE RECOMMENDATIONS\n\n", "")
+        if not recommendations_text.strip():
+            recommendations_text = "Not enough data to generate specific recommendations."
         
-        # Formatear puntos como viñetas numeradas más legibles
-        points = format_key_points(recom_text, max_points=5)
+        # Format points as numbered bullet points for better readability
+        points = format_key_points(recommendations_text, max_points=5)
         if points:
-            for i, point in enumerate(points.split("• ")[1:], 1):  # Empezar desde 1, ignorar el primer elemento vacío
+            for i, point in enumerate(points.split("• ")[1:], 1):  # Start from 1, ignoring the first empty element
                 if point.strip():
                     st.markdown(f"**{i}.** {point.strip()}")
     
     with tab2:
-        st.markdown("## 📋 Informe Completo")
+        st.markdown("## 📋 Full Report")
         
-        # Aplicar formato mejorado para Streamlit
+        # Apply improved formatting for Streamlit
         formatted_report = format_full_report(analysis_text)
         
-        # Mostrar el informe formateado
+        # Display the formatted report
         st.markdown(formatted_report)
         
-        # Botón de descarga
+        # Download button
         with open(filepath, "r", encoding="utf-8") as f:
             st.download_button(
-                label="📥 Descargar informe completo",
+                label="📥 Download Full Report",
                 data=f,
-                file_name="analisis_sentimiento.txt",
+                file_name="sentiment_analysis.txt",
                 mime="text/plain"
             )
 
 def error_message(error: Exception, show_details: bool = True) -> None:
     """
-    Muestra un mensaje de error con opción para ver detalles.
+    Displays an error message with an option to view details.
     
     Args:
-        error: Excepción ocurrida
-        show_details: Si se debe mostrar el botón para ver detalles
+        error: Occurred exception
+        show_details: Whether to show the button to view details
     """
     st.error(f"Error: {str(error)}")
     
     if show_details:
-        if st.button("Mostrar detalles del error"):
+        if st.button("Show error details"):
             st.exception(error)

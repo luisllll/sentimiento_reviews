@@ -1,98 +1,98 @@
 """
-Utilidades para el procesamiento de datos.
+Utilities for data processing.
 """
 import pandas as pd
 import logging
 from typing import List, Tuple, Optional, Dict, Any
 
-# Configurar logger
+# Configure logger
 logger = logging.getLogger(__name__)
 
-def validate_and_prepare_dataframe(df: pd.DataFrame, comment_column: str = 'Cuerpo') -> Tuple[bool, str, pd.DataFrame]:
+def validate_and_prepare_dataframe(df: pd.DataFrame, comment_column: str = 'Body') -> Tuple[bool, str, pd.DataFrame]:
     """
-    Valida y prepara un DataFrame para el análisis.
+    Validates and prepares a DataFrame for analysis.
     
     Args:
-        df: DataFrame a validar y preparar
-        comment_column: Nombre de la columna que contiene los comentarios
+        df: DataFrame to validate and prepare
+        comment_column: Name of the column containing the comments
         
     Returns:
-        Tupla con (éxito, mensaje, dataframe_procesado)
+        Tuple with (success, message, processed_dataframe)
     """
-    # Verificar que el DataFrame no es None
+    # Check if the DataFrame is None
     if df is None:
-        return False, "No se ha proporcionado un DataFrame válido", None
+        return False, "No valid DataFrame provided", None
     
-    # Verificar que la columna de comentarios existe
+    # Check if the comment column exists
     if comment_column not in df.columns:
-        return False, f"El archivo CSV debe contener una columna '{comment_column}'", None
+        return False, f"The CSV file must contain a column '{comment_column}'", None
     
-    # Limpiar y preparar datos
+    # Clean and prepare the data
     try:
-        # Eliminar filas con comentarios vacíos o nulos
+        # Remove rows with empty or null comments
         df_cleaned = df.dropna(subset=[comment_column])
         df_cleaned = df_cleaned[df_cleaned[comment_column].str.strip() != '']
         
-        # Verificar que quedan comentarios para analizar
+        # Check if there are comments left to analyze
         if len(df_cleaned) == 0:
-            return False, f"No hay comentarios válidos en la columna '{comment_column}'", None
+            return False, f"No valid comments in the '{comment_column}' column", None
         
-        logger.info(f"DataFrame preparado: {len(df_cleaned)} comentarios válidos")
-        return True, f"DataFrame preparado con éxito: {len(df_cleaned)} comentarios válidos", df_cleaned
+        logger.info(f"DataFrame prepared: {len(df_cleaned)} valid comments")
+        return True, f"DataFrame successfully prepared: {len(df_cleaned)} valid comments", df_cleaned
     
     except Exception as e:
-        logger.error(f"Error al preparar DataFrame: {str(e)}")
-        return False, f"Error al preparar los datos: {str(e)}", None
+        logger.error(f"Error preparing DataFrame: {str(e)}")
+        return False, f"Error preparing the data: {str(e)}", None
 
 def split_dataframe_into_chunks(
     df: pd.DataFrame, 
-    comment_column: str = 'Cuerpo', 
+    comment_column: str = 'Body', 
     chunk_size: int = 50,
     max_comments: int = 0
 ) -> Tuple[List[List[str]], int]:
     """
-    Divide un DataFrame en chunks para su procesamiento.
+    Splits a DataFrame into chunks for processing.
     
     Args:
-        df: DataFrame a dividir
-        comment_column: Nombre de la columna que contiene los comentarios
-        chunk_size: Tamaño de cada chunk
-        max_comments: Máximo número de comentarios a procesar (0 para todos)
+        df: DataFrame to split
+        comment_column: Name of the column containing the comments
+        chunk_size: Size of each chunk
+        max_comments: Maximum number of comments to process (0 for all)
         
     Returns:
-        Tupla con (lista_de_chunks, total_comentarios)
+        Tuple with (list_of_chunks, total_comments)
     """
     try:
-        # Limitar número de comentarios si se especifica
+        # Limit the number of comments if specified
         if max_comments > 0:
             df = df.head(max_comments)
         
-        # Obtener lista de comentarios
+        # Get the list of comments
         comments = df[comment_column].tolist()
         total_comments = len(comments)
         
-        # Dividir en chunks
+        # Split into chunks
         chunks = [comments[i:i + chunk_size] for i in range(0, total_comments, chunk_size)]
         
-        logger.info(f"Datos divididos en {len(chunks)} chunks (total: {total_comments} comentarios)")
+        logger.info(f"Data split into {len(chunks)} chunks (total: {total_comments} comments)")
         return chunks, total_comments
     
     except Exception as e:
-        logger.error(f"Error al dividir DataFrame en chunks: {str(e)}")
+        logger.error(f"Error splitting DataFrame into chunks: {str(e)}")
         raise
 
 def calculate_total_tokens(analyses: List[Dict[str, Any]]) -> Dict[str, int]:
     """
-    Calcula el total de tokens utilizados en el análisis.
+    Calculates the total tokens used in the analysis.
     
     Args:
-        analyses: Lista de resultados de análisis
+        analyses: List of analysis results
         
     Returns:
-        Diccionario con los totales de tokens
+        Dictionary with token totals
     """
     try:
-        tokens_reasoning = sum(a.get("tokens_razonamiento", 0) for a in analyses if not a.get("error", False))
+        tokens_reasoning = sum(a.get("tokens_reasoning", 0) for a in analyses if not a.get("error", False))
         total_tokens = sum(a.get("total_tokens", 0) for a in analyses if not a.get("error", False))
         
         return {
@@ -100,5 +100,5 @@ def calculate_total_tokens(analyses: List[Dict[str, Any]]) -> Dict[str, int]:
             "total_tokens": total_tokens
         }
     except Exception as e:
-        logger.error(f"Error al calcular tokens: {str(e)}")
+        logger.error(f"Error calculating tokens: {str(e)}")
         return {"tokens_reasoning": 0, "total_tokens": 0}
