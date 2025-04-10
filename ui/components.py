@@ -122,11 +122,14 @@ def results_tabs(analysis_text: str, metrics: Dict[str, Any], formatted_sections
     tab1, tab2 = st.tabs(["📊 Visual Summary", "📄 Full Report"])
     
     with tab1:
+
+        """
         # Sentiment chart
         st.plotly_chart(
             create_sentiment_pie_chart(metrics["sentiment_distribution"]), 
             use_container_width=True
         )
+        """
         
         # Display only the most important sections
         st.markdown("### 🔍 Key Findings")
